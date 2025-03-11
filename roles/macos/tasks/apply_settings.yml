@@ -1,0 +1,55 @@
+---
+# Tasks for applying macOS settings from exported variables
+
+- name: Ensure changes take effect immediately
+  shell: defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false
+  changed_when: false
+
+- name: Create screenshot directory if settings include screenshot location
+  file:
+    path: "{{ screenshot_location | default('~/Pictures/Screenshots') | expanduser }}"
+    state: directory
+    mode: '0755'
+  when: screenshot_location is defined
+
+- name: Apply exported macOS settings
+  shell: "defaults write {{ item.domain }} {{ item.key }} -{{ item.type }} {{ item.value }}"
+  with_items: "{{ macos_settings }}"
+  register: setting_result
+  failed_when: 
+    - setting_result.rc != 0
+    - "'already exists' not in setting_result.stderr"
+  changed_when: setting_result.rc == 0
+  when: macos_settings is defined
+
+# Special case handling for trackpad settings which need to be set in multiple places
+- name: Check if trackpad tap-to-click is in settings
+  set_fact:
+    has_tap_to_click: "{{ macos_settings | selectattr('key', 'equalto', 'Clicking') | list | length > 0 }}"
+  when: macos_settings is defined
+
+- name: Ensure trackpad settings are applied to both locations
+  shell: "{{ item }}"
+  with_items:
+    - "defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -int 1"
+    - "defaults write com.apple.AppleMultitouchTrackpad Clicking -int 1"
+  changed_when: true
+  when: 
+    - macos_settings is defined
+    - has_tap_to_click | default(false)
+
+# Restart necessary services
+- name: Restart Finder
+  shell: killall Finder
+  ignore_errors: yes
+  changed_when: false
+
+- name: Restart Dock
+  shell: killall Dock
+  ignore_errors: yes
+  changed_when: false
+
+- name: Restart SystemUIServer
+  shell: killall SystemUIServer
+  ignore_errors: yes
+  changed_when: false

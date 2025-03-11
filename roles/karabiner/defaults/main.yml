@@ -1,0 +1,3 @@
+---
+# Default variables for karabiner role
+karabiner_config_dir: "~/.config/karabiner"

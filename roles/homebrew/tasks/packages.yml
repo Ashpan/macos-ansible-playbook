@@ -1,0 +1,80 @@
+---
+# Tasks for installing Homebrew packages and casks
+
+# Setup mapping for cask names to application names
+- name: Create mapping between cask names and app paths
+  set_fact:
+    cask_app_mapping:
+      brave-browser: "Brave Browser"
+      ghostty: "Ghostty"
+      alfred: "Alfred 5"
+      visual-studio-code: "Visual Studio Code"
+      maccy: "Maccy"
+      linearmouse: "LinearMouse"
+      bartender: "Bartender 5"
+      spotify: "Spotify"
+      bruno: "Bruno"
+      karabiner-elements: "Karabiner-Elements"
+      itsycal: "Itsycal"
+      shottr: "Shottr"
+      swift-quit: "Swift Quit"
+      gpg-suite: "GPG Keychain"
+      coteditor: "CotEditor"
+      podman-desktop: "Podman Desktop"
+
+# Check for installed applications
+- name: Check for installed application in /Applications
+  stat:
+    path: "/Applications/{{ item }}.app"
+  register: app_exists
+  loop: 
+    - "Brave Browser" 
+    - "Ghostty"
+    - "Alfred 5"
+    - "Visual Studio Code"
+    - "Maccy"
+    - "LinearMouse"
+    - "Bartender 5"
+    - "Spotify"
+    - "Bruno"
+    - "Karabiner-Elements"
+    - "Itsycal"
+    - "Shottr"
+    - "Swift Quit"
+    - "GPG Keychain"
+    - "CotEditor"
+    - "Podman Desktop"
+
+# Install cask packages
+- name: Install Homebrew Cask Packages if not already installed
+  shell: "{{ homebrew_bin }} install --cask {{ item }}"
+  with_items: "{{ brew_cask_packages }}"
+  register: cask_install_result
+  failed_when: 
+    - cask_install_result.rc != 0 
+    - not 'already an App at' in cask_install_result.stderr
+    - not 'Cask is unavailable' in cask_install_result.stderr
+  when: 
+    - not (cask_app_mapping[item] in app_exists.results | map(attribute='stat.exists') | list)
+  changed_when: 
+    - cask_install_result.rc == 0 or 'already an App at' in cask_install_result.stderr
+
+# Check for and install regular packages
+- name: Check if packages are installed
+  shell: "{{ homebrew_bin }} list --formula | grep -q '^{{ item }}$'"
+  register: formula_installed
+  with_items: "{{ brew_packages }}"
+  ignore_errors: true
+  changed_when: false
+  failed_when: false
+
+- name: Install Homebrew Packages if not already installed
+  shell: "{{ homebrew_bin }} install {{ item.item }}"
+  with_items: "{{ formula_installed.results }}"
+  when: item.rc != 0  # Only install if the package is not already installed
+  register: package_install_result
+  failed_when: 
+    - package_install_result.rc != 0 
+    - not 'already installed' in package_install_result.stderr
+  changed_when: 
+    - package_install_result.rc == 0 or 'already installed' in package_install_result.stderr

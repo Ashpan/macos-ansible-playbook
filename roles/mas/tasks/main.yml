@@ -1,0 +1,55 @@
+---
+# Main tasks file for mas (Mac App Store) role
+
+- name: Check if user is signed into Mac App Store
+  shell: "{{ homebrew_bin }} list --formula | grep -q '^mas$'"
+  register: mas_installed
+  ignore_errors: true
+  changed_when: false
+  failed_when: false
+  
+- name: Ensure mas CLI is installed
+  shell: "{{ homebrew_bin }} install mas"
+  when: mas_installed.rc != 0
+  register: mas_install_result
+  failed_when: 
+    - mas_install_result.rc != 0 
+    - not 'already installed' in mas_install_result.stderr
+  changed_when: 
+    - mas_install_result.rc == 0 or 'already installed' in mas_install_result.stderr
+
+# New approach: Check if mas can list apps instead of checking account
+- name: Check if mas can list App Store apps
+  shell: "mas list"
+  register: mas_list
+  changed_when: false
+  failed_when: false
+  
+- name: Display detected Mac App Store apps
+  debug:
+    msg: "Found {{ mas_list.stdout_lines | length }} installed App Store apps"
+  when: mas_list.rc == 0
+
+- name: Set App Store login state based on ability to list apps
+  set_fact:
+    appstore_signed_in: "{{ mas_list.rc == 0 and mas_list.stdout_lines | length > 0 }}"
+  
+- name: Display alternative sign-in message
+  debug:
+    msg: "Note: Unable to verify Mac App Store login status directly due to macOS limitations, using alternative detection method."
+  when: not appstore_signed_in
+
+- name: Warning about App Store sign-in
+  debug:
+    msg: "You may need to be signed into the Mac App Store to install apps. Either sign in manually and run the playbook again, or use the '-e appstore_signed_in=true' flag to bypass this check."
+  when: not appstore_signed_in
+  
+# Allow forcing the signed-in state from command line if needed
+- name: Override App Store login state if specified
+  set_fact:
+    appstore_signed_in: true
+  when: force_appstore_signin | default(false) | bool
+  
+- name: Install Mac App Store apps
+  include_tasks: install.yml
+  when: appstore_signed_in

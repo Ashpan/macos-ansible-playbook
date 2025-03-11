@@ -1,0 +1,204 @@
+---
+# macOS Settings exported on Tue 11 Mar 2025 01:59:35 EDT
+# These settings were exported from Ashpans-MacBook-Pro.local
+
+macos_settings:
+  # Show path bar in Finder
+  - domain: "com.apple.finder"
+    key: "ShowPathbar"
+    type: "bool"
+    value: true
+
+  # Show status bar in Finder
+  - domain: "com.apple.finder"
+    key: "ShowStatusBar"
+    type: "bool"
+    value: true
+
+  # Default search scope
+  - domain: "com.apple.finder"
+    key: "FXDefaultSearchScope"
+    type: "string"
+    value: ""
+
+  # New window target
+  - domain: "com.apple.finder"
+    key: "NewWindowTarget"
+    type: "string"
+    value: "PfHm"
+
+  # New window target path
+  - domain: "com.apple.finder"
+    key: "NewWindowTargetPath"
+    type: "string"
+    value: ""
+
+  # Show all file extensions
+  - domain: "NSGlobalDomain"
+    key: "AppleShowAllExtensions"
+    type: "bool"
+    value: true
+
+  # Dock icon size
+  - domain: "com.apple.dock"
+    key: "tilesize"
+    type: "float"
+    value: 36.0
+
+  # Dock magnification enabled
+  - domain: "com.apple.dock"
+    key: "magnification"
+    type: "string"
+    value: ""
+
+  # Dock magnification size
+  - domain: "com.apple.dock"
+    key: "largesize"
+    type: "string"
+    value: ""
+
+  # Auto-hide dock
+  - domain: "com.apple.dock"
+    key: "autohide"
+    type: "bool"
+    value: true
+
+  # Auto-hide delay
+  - domain: "com.apple.dock"
+    key: "autohide-delay"
+    type: "string"
+    value: ""
+
+  # Auto-hide animation time
+  - domain: "com.apple.dock"
+    key: "autohide-time-modifier"
+    type: "string"
+    value: ""
+
+  # Dock orientation
+  - domain: "com.apple.dock"
+    key: "orientation"
+    type: "string"
+    value: ""
+
+  # Minimize effect
+  - domain: "com.apple.dock"
+    key: "mineffect"
+    type: "string"
+    value: ""
+
+  # Key repeat rate
+  - domain: "NSGlobalDomain"
+    key: "KeyRepeat"
+    type: "float"
+    value: 2.0
+
+  # Delay until key repeat
+  - domain: "NSGlobalDomain"
+    key: "InitialKeyRepeat"
+    type: "float"
+    value: 15.0
+
+  # Auto-correct enabled
+  - domain: "NSGlobalDomain"
+    key: "NSAutomaticSpellingCorrectionEnabled"
+    type: "bool"
+    value: false
+
+  # Auto-capitalization enabled
+  - domain: "NSGlobalDomain"
+    key: "NSAutomaticCapitalizationEnabled"
+    type: "bool"
+    value: true
+
+  # Period substitution enabled
+  - domain: "NSGlobalDomain"
+    key: "NSAutomaticPeriodSubstitutionEnabled"
+    type: "bool"
+    value: true
+
+  # Dash substitution enabled
+  - domain: "NSGlobalDomain"
+    key: "NSAutomaticDashSubstitutionEnabled"
+    type: "string"
+    value: ""
+
+  # Quote substitution enabled
+  - domain: "NSGlobalDomain"
+    key: "NSAutomaticQuoteSubstitutionEnabled"
+    type: "string"
+    value: ""
+
+  # Tap to click
+  - domain: "com.apple.driver.AppleBluetoothMultitouch.trackpad"
+    key: "Clicking"
+    type: "int"
+    value: 1
+
+  # Tap to click (alternative)
+  - domain: "com.apple.AppleMultitouchTrackpad"
+    key: "Clicking"
+    type: "int"
+    value: 0
+
+  # Three finger drag
+  - domain: "com.apple.driver.AppleBluetoothMultitouch.trackpad"
+    key: "TrackpadThreeFingerDrag"
+    type: "bool"
+    value: false
+
+  # Two-finger right click
+  - domain: "com.apple.driver.AppleBluetoothMultitouch.trackpad"
+    key: "TrackpadRightClick"
+    type: "bool"
+    value: true
+
+  # Screenshot save location
+  - domain: "com.apple.screencapture"
+    key: "location"
+    type: "string"
+    value: "~/Pictures/Screenshots"
+
+  # Screenshot file format
+  - domain: "com.apple.screencapture"
+    key: "type"
+    type: "string"
+    value: "png"
+
+  # Disable window shadow in screenshots
+  - domain: "com.apple.screencapture"
+    key: "disable-shadow"
+    type: "string"
+    value: ""
+
+# Skipping complex type array for NSGlobalDomain AppleLanguages
+  # System locale
+  - domain: "NSGlobalDomain"
+    key: "AppleLocale"
+    type: "string"
+    value: "en_CA"
+
+  # Measurement units
+  - domain: "NSGlobalDomain"
+    key: "AppleMeasurementUnits"
+    type: "string"
+    value: ""
+
+  # Use metric units
+  - domain: "NSGlobalDomain"
+    key: "AppleMetricUnits"
+    type: "string"
+    value: ""
+
+  # Temperature unit
+  - domain: "NSGlobalDomain"
+    key: "AppleTemperatureUnit"
+    type: "string"
+    value: ""
+
+  # Menu bar clock format
+  - domain: "com.apple.menuextra.clock"
+    key: "DateFormat"
+    type: "string"
+    value: ""
+

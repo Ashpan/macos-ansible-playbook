@@ -1,0 +1,26 @@
+---
+# Tasks for installing Mac App Store apps
+
+- name: Display apps to be installed from Mac App Store
+  debug:
+    msg: "Will attempt to install the following apps from Mac App Store: {{ mas_packages | map(attribute='name') | join(', ') }}"
+
+- name: Check for installed Mac App Store apps
+  shell: "mas list | grep -q '{{ item.id }}'"
+  register: mas_app_check
+  with_items: "{{ mas_packages }}"
+  ignore_errors: true
+  changed_when: false
+  failed_when: false
+  
+- name: Install apps from Mac App Store
+  shell: "mas install {{ item.item.id }}"
+  register: mas_install_result
+  with_items: "{{ mas_app_check.results }}"
+  when: item.rc != 0  # Only install if not already installed
+  failed_when:
+    - mas_install_result.rc != 0
+    - not 'is already installed' in mas_install_result.stderr
+    - not 'already installed' in mas_install_result.stderr
+  changed_when:
+    - mas_install_result.rc == 0 or 'is already installed' in mas_install_result.stderr or 'already installed' in mas_install_result.stderr

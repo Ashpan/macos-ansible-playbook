@@ -1,0 +1,59 @@
+---
+# Tasks for configuring Karabiner-Elements
+
+- name: Ensure Karabiner configuration directory exists
+  file:
+    path: "{{ karabiner_config_dir }}"
+    state: directory
+    mode: '0755'
+
+- name: Check if karabiner.json exists in the playbook directory
+  stat:
+    path: "{{ playbook_dir }}/files/karabiner.json"
+  register: local_karabiner_config
+  delegate_to: localhost
+
+- name: Warn if karabiner.json doesn't exist in playbook directory
+  debug:
+    msg: "No karabiner.json found in the playbook files directory. Skipping configuration."
+  when: not local_karabiner_config.stat.exists
+
+- name: Copy Karabiner-Elements configuration
+  copy:
+    src: "{{ playbook_dir }}/files/karabiner.json"
+    dest: "{{ karabiner_config_dir }}/karabiner.json"
+    mode: '0644'
+    backup: yes
+  when: local_karabiner_config.stat.exists
+  register: karabiner_config_copied
+
+- name: Set proper ownership of config file
+  file:
+    path: "{{ karabiner_config_dir }}/karabiner.json"
+    owner: "{{ ansible_user_id }}"
+    group: "staff"
+    mode: '0644'
+  when: karabiner_config_copied.changed
+
+- name: Copy custom complex modifications if they exist
+  block:
+    - name: Check if complex_modifications directory exists in files
+      stat:
+        path: "{{ playbook_dir }}/files/complex_modifications"
+      register: complex_mods_dir
+      delegate_to: localhost
+  
+    - name: Ensure complex_modifications directory exists
+      file:
+        path: "{{ karabiner_config_dir }}/assets/complex_modifications"
+        state: directory
+        mode: '0755'
+      when: complex_mods_dir.stat.exists and complex_mods_dir.stat.isdir
+  
+    - name: Copy complex_modifications files
+      copy:
+        src: "{{ playbook_dir }}/files/complex_modifications/"
+        dest: "{{ karabiner_config_dir }}/assets/complex_modifications/"
+        mode: '0644'
+        backup: yes
+      when: complex_mods_dir.stat.exists and complex_mods_dir.stat.isdir

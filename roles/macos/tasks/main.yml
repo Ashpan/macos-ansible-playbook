@@ -1,0 +1,24 @@
+---
+# Main tasks file for macOS role
+
+# Check if we have exported settings
+- name: Check if exported settings exist
+  stat:
+    path: "{{ playbook_dir }}/roles/macos/vars/exported_settings.yml"
+  register: exported_settings_file
+
+# Include exported settings if they exist
+- name: Include exported settings
+  include_vars:
+    file: "exported_settings.yml"
+  when: exported_settings_file.stat.exists
+
+# Apply exported settings if they exist
+- name: Apply exported settings
+  include_tasks: apply_settings.yml
+  when: exported_settings_file.stat.exists and macos_settings is defined
+
+# Fall back to direct commands if no exported settings
+- name: Apply default settings
+  include_tasks: direct_commands.yml
+  when: not exported_settings_file.stat.exists or macos_settings is not defined

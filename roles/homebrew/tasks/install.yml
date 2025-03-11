@@ -1,0 +1,64 @@
+---
+# Tasks for installing Homebrew if needed
+
+- name: Ensure Homebrew is installed
+  stat:
+    path: /usr/local/bin/brew
+  register: homebrew_check
+  ignore_errors: true
+
+- name: Check for Homebrew in Apple Silicon path
+  stat:
+    path: /opt/homebrew/bin/brew
+  register: homebrew_apple_silicon_check
+  ignore_errors: true
+  when: not homebrew_check.stat.exists
+
+- name: Set fact for Homebrew presence
+  set_fact:
+    homebrew_present: "{{ homebrew_check.stat.exists or homebrew_apple_silicon_check.stat.exists | default(false) }}"
+
+- name: Fail If Homebrew Is Not Installed and install_homebrew_if_missing Is False
+  fail:
+    msg: Homebrew is missing...Install from http://brew.sh/
+  when:
+    - not homebrew_present
+    - not install_homebrew_if_missing
+
+- name: Installing Homebrew (with sudo)
+  shell: |
+    echo "Running Homebrew installation..."
+    NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  become: true
+  when:
+    - not homebrew_present
+    - install_homebrew_if_missing
+  register: homebrew_install
+  ignore_errors: true
+
+- name: Display Homebrew installation output
+  debug:
+    var: homebrew_install.stdout_lines
+  when: homebrew_install is defined
+
+- name: Display Homebrew installation errors
+  debug:
+    var: homebrew_install.stderr_lines
+  when: homebrew_install is defined
+
+- name: Verify Homebrew installation
+  stat:
+    path: /usr/local/bin/brew
+  register: homebrew_verify
+  ignore_errors: true
+  
+- name: Verify Homebrew installation (Apple Silicon)
+  stat:
+    path: /opt/homebrew/bin/brew
+  register: homebrew_verify_apple_silicon
+  ignore_errors: true
+  when: not homebrew_verify.stat.exists
+  
+- name: Set fact for Homebrew installation verification
+  set_fact:
+    homebrew_installed: "{{ homebrew_verify.stat.exists or homebrew_verify_apple_silicon.stat.exists | default(false) }}"

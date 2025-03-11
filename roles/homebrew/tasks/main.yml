@@ -1,0 +1,27 @@
+---
+# Main tasks file for homebrew role
+
+- name: Check if Homebrew is installed
+  include_tasks: install.yml
+
+- name: Set homebrew_bin based on architecture
+  set_fact:
+    homebrew_bin: "{{ '/opt/homebrew/bin/brew' if homebrew_verify_apple_silicon.stat.exists | default(false) else '/usr/local/bin/brew' }}"
+  when: homebrew_installed
+
+- name: Update and upgrade Homebrew
+  block:
+    - name: Updating Homebrew
+      shell: "{{ homebrew_bin }} update"
+      
+    - name: Upgrading Homebrew Packages
+      shell: "{{ homebrew_bin }} upgrade"
+      register: result
+      failed_when: false
+  when: 
+    - homebrew_installed
+    - upgrade_homebrew_packages
+
+- name: Install Homebrew packages
+  include_tasks: packages.yml
+  when: homebrew_installed

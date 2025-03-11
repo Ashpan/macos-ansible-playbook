@@ -1,0 +1,66 @@
+---
+# Custom macOS settings - modify this file with your preferred settings
+
+# You can use the export-macos-settings.sh script to export your current settings
+# and then copy the relevant parts here.
+
+macos_settings:
+  # Show path bar in Finder
+  - domain: "com.apple.finder"
+    key: "ShowPathbar"
+    type: "bool"
+    value: "1"
+
+  # Show status bar in Finder
+  - domain: "com.apple.finder"
+    key: "ShowStatusBar"
+    type: "bool"
+    value: "1"
+
+  # Show all file extensions
+  - domain: "NSGlobalDomain"
+    key: "AppleShowAllExtensions"
+    type: "bool"
+    value: "1"
+
+  # Dock icon size
+  - domain: "com.apple.dock"
+    key: "tilesize"
+    type: "float"
+    value: "36"
+
+  # Auto-hide dock
+  - domain: "com.apple.dock"
+    key: "autohide"
+    type: "bool"
+    value: "1"
+
+  # Key repeat rate
+  - domain: "NSGlobalDomain"
+    key: "KeyRepeat"
+    type: "int"
+    value: "2"
+
+  # Delay until key repeat
+  - domain: "NSGlobalDomain"
+    key: "InitialKeyRepeat"
+    type: "int"
+    value: "15"
+
+  # Tap to click
+  - domain: "com.apple.driver.AppleBluetoothMultitouch.trackpad"
+    key: "Clicking"
+    type: "bool"
+    value: "1"
+
+  # Screenshot save location
+  - domain: "com.apple.screencapture"
+    key: "location"
+    type: "string"
+    value: "~/Pictures/Screenshots"
+
+  # Screenshot file format
+  - domain: "com.apple.screencapture"
+    key: "type"
+    type: "string"
+    value: "png"

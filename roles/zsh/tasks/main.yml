@@ -1,0 +1,59 @@
+---
+# Tasks for setting up Oh My Zsh and zshrc configuration
+
+- name: Check if Oh My Zsh is installed
+  stat:
+    path: "{{ ansible_env.HOME }}/.oh-my-zsh"
+  register: oh_my_zsh_installed
+
+- name: Install Oh My Zsh if not already installed
+  shell: >
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+  when: not oh_my_zsh_installed.stat.exists
+
+- name: Install zsh-autosuggestions plugin
+  git:
+    repo: https://github.com/zsh-users/zsh-autosuggestions
+    dest: "{{ ansible_env.HOME }}/.oh-my-zsh/custom/plugins/zsh-autosuggestions"
+    depth: 1
+  when: oh_my_zsh_installed.stat.exists or not oh_my_zsh_installed.stat.exists
+
+- name: Install zsh-history-substring-search plugin
+  git:
+    repo: https://github.com/zsh-users/zsh-history-substring-search
+    dest: "{{ ansible_env.HOME }}/.oh-my-zsh/custom/plugins/zsh-history-substring-search"
+    depth: 1
+  when: oh_my_zsh_installed.stat.exists or not oh_my_zsh_installed.stat.exists
+
+- name: Check if shrink-path plugin is already installed
+  stat:
+    path: "{{ ansible_env.HOME }}/.oh-my-zsh/plugins/shrink-path"
+  register: shrink_path_installed
+
+- name: Install shrink-path plugin
+  shell: >
+    mkdir -p {{ ansible_env.HOME }}/.oh-my-zsh/plugins/shrink-path && 
+    curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/plugins/shrink-path/shrink-path.plugin.zsh > {{ ansible_env.HOME }}/.oh-my-zsh/plugins/shrink-path/shrink-path.plugin.zsh
+  when: not shrink_path_installed.stat.exists
+
+# Include NVM installation tasks
+- include_tasks: nvm.yml
+
+- name: Create Docker completions directory
+  file:
+    path: "{{ ansible_env.HOME }}/.docker/completions"
+    state: directory
+    mode: '0755'
+  ignore_errors: true
+
+- name: Copy .zshrc file
+  copy:
+    src: "{{ playbook_dir }}/files/zshrc"
+    dest: "{{ ansible_env.HOME }}/.zshrc"
+    backup: yes
+    mode: '0644'
+
+- name: Set zsh as default shell
+  shell: chsh -s $(which zsh)
+  ignore_errors: true
+  changed_when: false

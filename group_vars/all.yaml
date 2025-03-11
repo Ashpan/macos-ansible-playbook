@@ -1,0 +1,45 @@
+---
+# Global variables used across roles
+
+# Homebrew settings
+install_homebrew_if_missing: true
+upgrade_homebrew_packages: true
+
+# Homebrew packages to install
+brew_packages:
+  - git
+  - jq
+  - ssh-copy-id
+  - wget
+  - zsh
+  - zsh-completions
+  - zsh-syntax-highlighting
+  - tree
+  - mas
+  - podman
+
+# Homebrew cask packages to install
+brew_cask_packages:
+  - brave-browser
+  - ghostty
+  - alfred
+  - visual-studio-code
+  - maccy
+  - linearmouse
+  - bartender
+  - spotify
+  - bruno
+  - karabiner-elements
+  - itsycal
+  - shottr
+  - swift-quit
+  - gpg-suite
+  - coteditor
+  - podman-desktop
+
+# Mac App Store packages
+mas_packages:
+  - { id: 1352778147, name: "Bitwarden" }
+  # Add more App Store apps as needed
+  # - { id: 441258766, name: "Magnet" }
+  # - { id: 497799835, name: "Xcode" }
