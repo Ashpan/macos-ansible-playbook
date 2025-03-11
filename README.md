@@ -19,6 +19,13 @@ This automation handles:
 - Git (to clone this repository)
 - Basic command line knowledge
 
+## Zero to Configured
+
+If you want to run this all in 1 go, you can run
+```bash
+curl -fsSL https://gist.githubusercontent.com/Ashpan/8d8dab5122d905d6a055a4eb6d214b8e/raw/aeda95195617fd6c72f42bc73cf3a2e61424e26a/script.sh | bash
+```
+
 ## Getting Started
 
 ### 1. Clone this repository
