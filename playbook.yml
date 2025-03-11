@@ -3,10 +3,12 @@
   hosts: localhost
   connection: local
   become: false
-  
+
   roles:
     - { role: homebrew, tags: ['homebrew'] }
     - { role: mas, tags: ['mas'] }
     - { role: karabiner, tags: ['karabiner'] }
     - { role: macos, tags: ['macos'] }
     - { role: zsh, tags: ['zsh'] }
+    - { role: rust, tags: ['rust'] }
+    - { role: jenv, tags: ['jenv'] }

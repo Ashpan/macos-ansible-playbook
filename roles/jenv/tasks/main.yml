@@ -1,0 +1,62 @@
+---
+# Tasks for installing jEnv and configuring Java environments
+
+- name: Check if jEnv is installed
+  stat:
+    path: "{{ ansible_env.HOME }}/.jenv/bin/jenv"
+  register: jenv_installed
+
+- name: Install jEnv via Homebrew
+  homebrew:
+    name: jenv
+    state: present
+  when: not jenv_installed.stat.exists
+
+- name: Ensure .jenv directory exists
+  file:
+    path: "{{ ansible_env.HOME }}/.jenv"
+    state: directory
+    mode: '0755'
+  when: not jenv_installed.stat.exists
+
+- name: Add jEnv to PATH and initialize in zshrc
+  blockinfile:
+    path: "{{ ansible_env.HOME }}/.zshrc"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - JENV"
+    block: |
+      export PATH="$HOME/.jenv/bin:$PATH"
+      eval "$(jenv init -)"
+    state: present
+
+- name: Check if jEnv export plugin is enabled
+  shell: "jenv plugins | grep -q export"
+  register: jenv_export_plugin
+  ignore_errors: true
+  changed_when: false
+
+- name: Enable jEnv export plugin for JAVA_HOME
+  shell: "jenv enable-plugin export"
+  when: jenv_export_plugin.rc != 0
+
+- name: Find installed Java versions
+  shell: "/usr/libexec/java_home -V 2>&1 | grep -E 'java version|openjdk version' | awk -F '\"' '{print $(NF-1)}'"
+  register: java_versions
+  changed_when: false
+  ignore_errors: true
+
+- name: Display found Java versions
+  debug:
+    var: java_versions.stdout_lines
+  when: java_versions.stdout_lines is defined and java_versions.stdout_lines | length > 0
+
+- name: Add Java versions to jEnv
+  shell: "jenv add $(/usr/libexec/java_home -v {{ item }})"
+  with_items: "{{ java_versions.stdout_lines | default([]) }}"
+  ignore_errors: true
+  register: jenv_add_result
+  changed_when: "'added' in jenv_add_result.stdout"
+
+- name: Set global Java version if available
+  shell: "jenv global {{ java_versions.stdout_lines[0] | default('system') }}"
+  when: java_versions.stdout_lines is defined and java_versions.stdout_lines | length > 0
+  changed_when: true

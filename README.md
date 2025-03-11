@@ -11,6 +11,8 @@ This automation handles:
 - **macOS Settings**: System preferences and defaults
 - **Karabiner-Elements**: Custom keyboard configuration
 - **Oh My Zsh**: Shell setup with plugins and configuration
+- **Rust**: Installation of Rust programming language and Cargo
+- **Java Environment**: Setup with jEnv for managing multiple Java versions
 - **Directory Structure**: Organized by role for easy maintenance
 
 ## Prerequisites
@@ -76,6 +78,10 @@ Run specific parts of the setup using tags:
 - `macos`: Configure macOS settings
 - `karabiner`: Set up Karabiner-Elements configuration
 - `zsh`: Configure Oh My Zsh and shell environment
+- `rust`: Install Rust and Cargo
+- `jenv`: Install jEnv and configure Java environments
+
+
 
 Example:
 ```bash
@@ -86,22 +92,25 @@ ansible-playbook -i inventory.yml playbook.yml -K --tags macos
 
 ```
 mac-setup/
-├── playbook.yml                  # Main playbook file
-├── inventory.yml                 # Inventory file
+├── bootstrap.sh                 # Bootstrap script for new Macs
+├── playbook.yml                 # Main playbook file
+├── inventory.yml                # Inventory file
 ├── group_vars/
-│   └── all.yml                   # Variables for all groups
-├── files/                        # Static files to be copied
-│   ├── zshrc                     # Your zsh configuration
-│   └── karabiner.json            # Your Karabiner configuration
+│   └── all.yml                  # Variables for all groups
+├── files/                       # Static files to be copied
+│   ├── zshrc                    # Your zsh configuration
+│   └── karabiner.json           # Your Karabiner configuration
 ├── roles/
-│   ├── homebrew/                 # Homebrew installation and packages
-│   ├── mas/                      # Mac App Store applications
-│   ├── macos/                    # macOS settings
-│   ├── karabiner/                # Karabiner-Elements configuration
-│   └── zsh/                      # Oh My Zsh setup
-├── export-macos-settings.sh      # Script to export macOS settings
-├── export-zshrc.sh               # Script to export zshrc
-└── migrate-karabiner-config.sh   # Script to export Karabiner config
+│   ├── homebrew/                # Homebrew installation and packages
+│   ├── mas/                     # Mac App Store applications
+│   ├── macos/                   # macOS settings
+│   ├── karabiner/               # Karabiner-Elements configuration
+│   ├── zsh/                     # Oh My Zsh setup
+│   ├── rust/                    # Rust programming language setup
+│   └── jenv/                    # Java environment manager setup
+├── export-macos-settings.sh     # Script to export macOS settings
+├── export-zshrc.sh              # Script to export zshrc
+└── migrate-karabiner-config.sh  # Script to export Karabiner config
 ```
 
 ## Customization
@@ -172,10 +181,21 @@ Modify `files/zshrc` to customize your shell environment.
 - If plugins aren't loading, check that they're properly installed in the Oh My Zsh plugins directory
 - For NVM issues, try sourcing your `.zshrc` manually
 
+### Java/jEnv Issues
+- If Java versions aren't detected, try running `jenv add $(/usr/libexec/java_home)` manually
+- Make sure to run `jenv enable-plugin export` to properly set JAVA_HOME
+
+### Rust Issues
+- If Rust doesn't install correctly, try running the rustup script manually:
+  ```bash
+  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+  ```
+- Ensure `~/.cargo/bin` is in your PATH
+
 ## License
 
 MIT
 
 ## Credits
 
-Created by Ashpan
+Created by Ashpan Raskar
