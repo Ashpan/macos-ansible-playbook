@@ -31,7 +31,7 @@ curl -fsSL https://gist.githubusercontent.com/Ashpan/8d8dab5122d905d6a055a4eb6d2
 ### 1. Clone this repository
 
 ```bash
-git clone https://github.com/yourusername/mac-setup.git
+git clone git@github.com:Ashpan/macos-ansible-playbook.git mac-setup
 cd mac-setup
 ```
 
