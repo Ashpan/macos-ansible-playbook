@@ -17,6 +17,7 @@ brew_packages:
   - tree
   - mas
   - podman
+  - git-delta
 
 # Homebrew cask packages to install
 brew_cask_packages:
